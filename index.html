@@ -22,7 +22,7 @@
 
         .container {
             width: 100%;
-            max-width: 600px; /* Max width for desktop view */
+            max-width: 600px; /* Max width for desktop view, allows vertical stacking */
             background-color: #2d3748; /* Slightly lighter dark background for container */
             border-radius: 1rem; /* Rounded corners */
             padding: 1.5rem;
@@ -165,7 +165,7 @@
             min-height: 2.5rem;
         }
 
-        /* New styling for the contenteditable damage text boxes to make them square */
+        /* Styling for the contenteditable damage text boxes to make them square */
         .damage-input-square {
             background-color: #4a5568;
             border: 1px solid #6b7280;
@@ -193,11 +193,12 @@
             width: 100%; /* Ensure placeholder takes full width for centering */
         }
 
-        /* Arrow styling */
+        /* Arrow styling - now primarily for vertical flow */
         .arrow {
             font-size: 1.5rem;
             color: #a0aec0;
-            margin: 0 0.5rem;
+            margin: 0.5rem 0; /* Adjusted margin for vertical spacing */
+            display: block; /* Ensure it's always a block for vertical flow */
         }
 
         /* Responsive adjustments for smaller screens */
@@ -271,33 +272,30 @@
         <section class="mb-8 p-4 bg-gray-700 rounded-lg shadow-md">
             <h2 class="text-2xl font-semibold mb-4 text-blue-200">Damage & Health</h2>
 
-            <div class="flex flex-col md:flex-row items-start justify-around mb-6 text-center">
-                <div class="flex-1 p-2">
+            <div class="flex flex-col items-center justify-around mb-6 text-center">
+                <div class="p-2 w-full"> <!-- Use w-full for full width in vertical stack -->
                     <p class="text-lg font-medium mb-2">Minor Damage</p>
                     <p class="text-sm mt-2 text-gray-400">Mark 1 HP</p>
                 </div>
-                <span class="arrow md:block hidden">&rarr;</span>
-                <span class="arrow block md:hidden mb-4 mt-4">&darr;</span>
-                <div class="flex-1 p-2">
+                <span class="arrow">&darr;</span> <!-- Only vertical arrow -->
+                <div class="p-2 w-full">
                     <p class="text-lg font-medium mb-2">Major Damage</p>
                     <p class="text-sm mt-2 text-gray-400">Mark 2 HP</p>
                 </div>
-                <span class="arrow md:block hidden">&rarr;</span>
-                <span class="arrow block md:hidden mb-4 mt-4">&darr;</span>
-                <div class="flex-1 p-2">
+                <span class="arrow">&darr;</span> <!-- Only vertical arrow -->
+                <div class="p-2 w-full">
                     <p class="text-lg font-medium mb-2">Severe Damage</p>
                     <p class="text-sm mt-2 text-gray-400">Mark 3 HP</p>
                 </div>
             </div>
 
-            <!-- New section with two text boxes and an arrow -->
-            <div class="flex flex-col md:flex-row items-center justify-around mb-6 text-center">
-                <div class="flex-1 p-2">
+            <!-- New section with two text boxes and an arrow, now vertically oriented -->
+            <div class="flex flex-col items-center justify-around mb-6 text-center">
+                <div class="p-2 w-full">
                     <div contenteditable="true" class="damage-input-square" placeholder="Enter text here..."></div>
                 </div>
-                <span class="arrow md:block hidden">&rarr;</span>
-                <span class="arrow block md:hidden mb-4 mt-4">&darr;</span>
-                <div class="flex-1 p-2">
+                <span class="arrow">&darr;</span> <!-- Only vertical arrow -->
+                <div class="p-2 w-full">
                     <div contenteditable="true" class="damage-input-square" placeholder="Enter text here..."></div>
                 </div>
             </div>
