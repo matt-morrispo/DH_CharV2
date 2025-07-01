@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daggerheart Character Tracker</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the app */
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter font */
+            background-color: #1a202c; /* Dark background */
+            color: #e2e8f0; /* Light text color */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for scrolling on mobile */
+            min-height: 100vh;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px; /* Max width for desktop view */
+            background-color: #2d3748; /* Slightly lighter dark background for container */
+            border-radius: 1rem; /* Rounded corners */
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Input field styling */
+        input[type="text"], input[type="number"] {
+            background-color: #4a5568; /* Darker input background */
+            border: 1px solid #6b7280; /* Border color */
+            color: #e2e8f0; /* Text color */
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #63b3ed; /* Blue border on focus */
+        }
+
+        /* Button styling */
+        .btn {
+            background-color: #4299e1; /* Blue button */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none; /* Prevent text selection on click */
+        }
+
+        .btn:hover {
+            background-color: #3182ce; /* Darker blue on hover */
+        }
+
+        /* Icon grid styling */
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); /* Responsive grid for icons */
+            gap: 0.75rem; /* Space between icons */
+        }
+
+        /* HP/STRESS rectangle icon styling */
+        .hp-stress-icon {
+            width: 100%;
+            padding-top: 100%; /* Makes height equal to width for perfect squares */
+            position: relative;
+            background-color: #a0aec0; /* Grey */
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); /* Inner shadow */
+        }
+
+        .hp-stress-icon[data-state="1"] {
+            background-color: #48bb78; /* Green */
+        }
+
+        .hp-stress-icon[data-state="2"] {
+            background-color: #e53e3e; /* Red */
+        }
+
+        /* STRESS specific states: grey -> red -> grey */
+        .stress-icon[data-state="1"] {
+            background-color: #e53e3e; /* Red */
+        }
+        .stress-icon[data-state="2"] {
+            background-color: #a0aec0; /* Grey */
+        }
+
+
+        /* HOPE diamond icon styling */
+        .hope-icon {
+            width: 40px; /* Fixed smaller width */
+            height: 40px; /* Fixed smaller height */
+            position: relative;
+            background-color: #cbd5e0; /* White */
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+            transform: rotate(45deg); /* Rotate to form a diamond */
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); /* Inner shadow */
+            margin: 0.25rem; /* Add some margin to prevent overlap */
+        }
+
+        /* Adjust grid for HOPE icons to prevent overlap */
+        #hopeIcons.icon-grid {
+            grid-template-columns: repeat(auto-fit, minmax(45px, 1fr)); /* Adjust minmax to accommodate smaller icons + margin */
+            gap: 0.25rem; /* Smaller gap */
+        }
+
+        .hope-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: inherit;
+            transform: rotate(-45deg);
+            border-radius: inherit;
+        }
+
+        .hope-icon[data-state="1"] {
+            background-color: #ecc94b; /* Gold */
+        }
+
+        .hope-icon[data-state="2"] {
+            background-color: #e53e3e; /* Red */
+        }
+
+        /* Ensure text inside diamond is readable */
+        .hope-icon div {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg); /* Counter-rotate text */
+            color: #2d3748; /* Dark text for contrast */
+            font-weight: bold;
+            font-size: 0.75rem;
+            user-select: none;
+        }
+
+        /* Custom text box for damage levels */
+        /* This class is now primarily for input fields, not for damage text areas */
+        .damage-textbox {
+            background-color: #4a5568;
+            border: 1px solid #6b7280;
+            color: #e2e8f0;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 2.5rem; /* Ensure a minimum height */
+        }
+
+        /* Arrow styling */
+        .arrow {
+            font-size: 1.5rem;
+            color: #a0aec0;
+            margin: 0 0.5rem;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+            .icon-grid {
+                grid-template-columns: repeat(auto-fit, minmax(35px, 1fr));
+                gap: 0.5rem;
+            }
+            .hp-stress-icon {
+                border-radius: 0.4rem;
+            }
+            .hope-icon {
+                width: 35px; /* Smaller on mobile */
+                height: 35px; /* Smaller on mobile */
+                margin: 0.2rem;
+            }
+            .hope-icon div {
+                font-size: 0.6rem;
+            }
+            #hopeIcons.icon-grid {
+                grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center mb-6 text-blue-300">Daggerheart Tracker</h1>
+
+        <!-- Character Information Section -->
+        <section class="mb-8 p-4 bg-gray-700 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold mb-4 text-blue-200">Character Info</h2>
+            <div class="mb-4">
+                <label for="characterName" class="block text-sm font-medium mb-1">Character Name</label>
+                <input type="text" id="characterName" placeholder="Enter character name" class="damage-textbox">
+            </div>
+            <div class="mb-4">
+                <label for="heritage" class="block text-sm font-medium mb-1">Heritage</label>
+                <input type="text" id="heritage" placeholder="Enter heritage" class="damage-textbox">
+            </div>
+            <div>
+                <label for="subclass" class="block text-sm font-medium mb-1">Subclass</label>
+                <input type="text" id="subclass" placeholder="Enter subclass" class="damage-textbox">
+            </div>
+        </section>
+
+        <!-- Evasion and Armor Section -->
+        <section class="mb-8 p-4 bg-gray-700 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold mb-4 text-blue-200">Defenses</h2>
+            <div class="mb-4">
+                <label for="evasion" class="block text-sm font-medium mb-1">Evasion</label>
+                <input type="number" id="evasion" value="0" min="0" class="damage-textbox">
+            </div>
+            <div>
+                <label for="armor" class="block text-sm font-medium mb-1">Armor</label>
+                <div class="flex items-center space-x-2">
+                    <button id="decrementArmor" class="btn px-3 py-2 text-lg">-</button>
+                    <input type="number" id="armor" value="0" min="0" class="flex-grow damage-textbox text-center">
+                    <button id="incrementArmor" class="btn px-3 py-2 text-lg">+</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Damage and Health Section -->
+        <section class="mb-8 p-4 bg-gray-700 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold mb-4 text-blue-200">Damage & Health</h2>
+
+            <div class="flex flex-col md:flex-row items-start justify-around mb-6 text-center">
+                <div class="flex-1 p-2">
+                    <p class="text-lg font-medium mb-2">Minor Damage</p>
+                    <p class="text-sm mt-2 text-gray-400">Mark 1 HP</p>
+                </div>
+                <span class="arrow md:block hidden">&rarr;</span>
+                <span class="arrow block md:hidden mb-4 mt-4">&darr;</span>
+                <div class="flex-1 p-2">
+                    <p class="text-lg font-medium mb-2">Major Damage</p>
+                    <p class="text-sm mt-2 text-gray-400">Mark 2 HP</p>
+                </div>
+                <span class="arrow md:block hidden">&rarr;</span>
+                <span class="arrow block md:hidden mb-4 mt-4">&darr;</span>
+                <div class="flex-1 p-2">
+                    <p class="text-lg font-medium mb-2">Severe Damage</p>
+                    <p class="text-sm mt-2 text-gray-400">Mark 3 HP</p>
+                </div>
+            </div>
+
+            <!-- New section with two text boxes and an arrow -->
+            <div class="flex flex-col md:flex-row items-center justify-around mb-6 text-center">
+                <div class="flex-1 p-2">
+                    <div contenteditable="true" class="damage-textbox min-h-[3rem]" placeholder="Enter text here..."></div>
+                </div>
+                <span class="arrow md:block hidden">&rarr;</span>
+                <span class="arrow block md:hidden mb-4 mt-4">&darr;</span>
+                <div class="flex-1 p-2">
+                    <div contenteditable="true" class="damage-textbox min-h-[3rem]" placeholder="Enter text here..."></div>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-3 text-blue-200">HP (Health Points)</h3>
+            <div id="hpIcons" class="icon-grid mb-6">
+                <!-- HP icons will be generated here by JavaScript -->
+            </div>
+
+            <h3 class="text-xl font-semibold mb-3 text-blue-200">STRESS</h3>
+            <div id="stressIcons" class="icon-grid">
+                <!-- STRESS icons will be generated here by JavaScript -->
+            </div>
+        </section>
+
+        <!-- HOPE Section -->
+        <section class="p-4 bg-gray-700 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold mb-4 text-blue-200">HOPE</h2>
+            <div id="hopeIcons" class="icon-grid">
+                <!-- HOPE icons will be generated here by JavaScript -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Armor Increment/Decrement Logic ---
+            const armorInput = document.getElementById('armor');
+            const decrementArmorBtn = document.getElementById('decrementArmor');
+            const incrementArmorBtn = document.getElementById('incrementArmor');
+
+            decrementArmorBtn.addEventListener('click', () => {
+                let currentValue = parseInt(armorInput.value);
+                if (currentValue > 0) {
+                    armorInput.value = currentValue - 1;
+                }
+            });
+
+            incrementArmorBtn.addEventListener('click', () => {
+                let currentValue = parseInt(armorInput.value);
+                armorInput.value = currentValue + 1;
+            });
+
+            // --- Icon Generation and Click Logic ---
+
+            /**
+             * Creates and appends clickable icons to a container.
+             * @param {HTMLElement} container - The DOM element to append icons to.
+             * @param {number} count - The number of icons to create.
+             * @param {string} typeClass - CSS class for styling the icon (e.g., 'hp-stress-icon', 'hope-icon').
+             * @param {string} [initialState='0'] - Initial data-state value.
+             * @param {boolean} isStress - Flag to apply stress-specific color logic.
+             */
+            function createIcons(container, count, typeClass, initialState = '0', isStress = false) {
+                for (let i = 0; i < count; i++) {
+                    const icon = document.createElement('div');
+                    icon.classList.add(typeClass);
+                    if (isStress) {
+                        icon.classList.add('stress-icon'); // Add specific class for stress to apply different CSS
+                    }
+                    icon.setAttribute('data-state', initialState); // 0: grey/white, 1: green/gold/red, 2: red/grey
+
+                    // Add text for HOPE icons
+                    if (typeClass === 'hope-icon') {
+                        const textDiv = document.createElement('div');
+                        textDiv.textContent = i + 1; // Display number 1-6
+                        icon.appendChild(textDiv);
+                    }
+
+                    icon.addEventListener('click', () => {
+                        let currentState = parseInt(icon.getAttribute('data-state'));
+                        if (isStress) {
+                            // Stress cycle: 0 (grey) -> 1 (red) -> 0 (grey)
+                            currentState = (currentState === 0) ? 1 : 0;
+                        } else {
+                            // HP/Hope cycle: 0 -> 1 -> 2 -> 0
+                            currentState = (currentState + 1) % 3;
+                        }
+                        icon.setAttribute('data-state', currentState.toString());
+                    });
+                    container.appendChild(icon);
+                }
+            }
+
+            // Get icon containers
+            const hpIconsContainer = document.getElementById('hpIcons');
+            const stressIconsContainer = document.getElementById('stressIcons');
+            const hopeIconsContainer = document.getElementById('hopeIcons');
+
+            // Generate HP icons
+            createIcons(hpIconsContainer, 12, 'hp-stress-icon');
+
+            // Generate STRESS icons (with isStress flag set to true)
+            createIcons(stressIconsContainer, 12, 'hp-stress-icon', '0', true);
+
+            // Generate HOPE icons
+            createIcons(hopeIconsContainer, 6, 'hope-icon');
+        });
+    </script>
+</body>
+</html>
