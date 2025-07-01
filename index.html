@@ -153,8 +153,7 @@
             user-select: none;
         }
 
-        /* Custom text box for damage levels */
-        /* This class is now primarily for input fields, not for damage text areas */
+        /* Custom text box for general inputs */
         .damage-textbox {
             background-color: #4a5568;
             border: 1px solid #6b7280;
@@ -163,7 +162,35 @@
             border-radius: 0.5rem;
             width: 100%;
             box-sizing: border-box;
-            min-height: 2.5rem; /* Ensure a minimum height */
+            min-height: 2.5rem;
+        }
+
+        /* New styling for the contenteditable damage text boxes to make them square */
+        .damage-input-square {
+            background-color: #4a5568;
+            border: 1px solid #6b7280;
+            color: #e2e8f0;
+            padding: 0.5rem; /* Adjusted padding for square shape */
+            border-radius: 0.5rem;
+            width: 100%;
+            box-sizing: border-box;
+            height: 80px; /* Fixed height for visual consistency with icons */
+            overflow-y: auto; /* Allow scrolling if content overflows vertically */
+            resize: vertical; /* Allow user to resize vertically if they want */
+            display: flex; /* Use flexbox for centering content */
+            align-items: center; /* Vertically center content */
+            justify-content: center; /* Horizontally center content */
+            text-align: center; /* Ensure text itself is centered */
+        }
+
+        /* Placeholder styling for contenteditable divs */
+        [contenteditable="true"]:empty:not(:focus)::before {
+            content: attr(placeholder);
+            color: #a0aec0; /* Lighter grey for placeholder */
+            pointer-events: none; /* Allow clicks to go through to the div */
+            display: block; /* Make it block to center */
+            text-align: center;
+            width: 100%; /* Ensure placeholder takes full width for centering */
         }
 
         /* Arrow styling */
@@ -195,6 +222,9 @@
             }
             #hopeIcons.icon-grid {
                 grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            }
+            .damage-input-square {
+                height: 70px; /* Slightly smaller on mobile */
             }
         }
     </style>
@@ -263,12 +293,12 @@
             <!-- New section with two text boxes and an arrow -->
             <div class="flex flex-col md:flex-row items-center justify-around mb-6 text-center">
                 <div class="flex-1 p-2">
-                    <div contenteditable="true" class="damage-textbox min-h-[3rem]" placeholder="Enter text here..."></div>
+                    <div contenteditable="true" class="damage-input-square" placeholder="Enter text here..."></div>
                 </div>
                 <span class="arrow md:block hidden">&rarr;</span>
                 <span class="arrow block md:hidden mb-4 mt-4">&darr;</span>
                 <div class="flex-1 p-2">
-                    <div contenteditable="true" class="damage-textbox min-h-[3rem]" placeholder="Enter text here..."></div>
+                    <div contenteditable="true" class="damage-input-square" placeholder="Enter text here..."></div>
                 </div>
             </div>
 
